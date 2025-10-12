@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: bookmarker-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/bookmarks.db:/app/bookmarks.db
+    environment:
+      - SECRET_KEY=${SECRET_KEY:-your-secret-key-change-this-in-production}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES:-30}
+      - REFRESH_TOKEN_EXPIRE_DAYS=${REFRESH_TOKEN_EXPIRE_DAYS:-30}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost:3000,http://localhost:5173}
+    restart: unless-stopped
+    networks:
+      - bookmarker-network
+
+  frontend:
+    build: ./frontend
+    container_name: bookmarker-frontend
+    ports:
+      - "3000:80"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - bookmarker-network
+
+networks:
+  bookmarker-network:
+    driver: bridge
+
+volumes:
+  bookmarks-data:

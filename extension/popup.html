@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Bookmarker</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container popup-container">
+    <!-- Not logged in view -->
+    <div id="notLoggedIn" style="display: none;">
+      <div class="header">
+        <h1>Bookmarker</h1>
+        <p>Please log in to save bookmarks</p>
+      </div>
+      <button id="loginButton" class="btn btn-primary">Login</button>
+    </div>
+
+    <!-- Logged in view -->
+    <div id="loggedIn" style="display: none;">
+      <div class="header">
+        <h2>Bookmarker</h2>
+      </div>
+
+      <div id="statusMessage" style="padding: 20px; text-align: center;">
+        <p id="statusText">Saving bookmark...</p>
+      </div>
+
+      <div id="errorMessage" class="error" style="display: none; margin: 10px;"></div>
+      <div id="successMessage" class="success" style="display: none; margin: 10px;"></div>
+    </div>
+
+    <!-- Loading view -->
+    <div id="loading" style="display: block;">
+      <p>Loading...</p>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
