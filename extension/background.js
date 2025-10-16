@@ -31,8 +31,8 @@ async function refreshTokenIfNeeded() {
 
   if (tokenAge > twentyMinutes) {
     try {
-      const apiUrlData = await browser.storage.local.get('bookmarker_api_url');
-      const apiUrl = apiUrlData.bookmarker_api_url || 'http://localhost:8000';
+      const apiUrlData = await browser.storage.local.get(API_URL_KEY);
+      const apiUrl = apiUrlData[API_URL_KEY] || DEFAULT_API_URL;
 
       const response = await fetch(`${apiUrl}/api/auth/refresh`, {
         method: 'POST',
@@ -70,7 +70,7 @@ browser.runtime.onInstalled.addListener((details) => {
   if (details.reason === 'install') {
     // Set default API URL
     browser.storage.local.set({
-      bookmarker_api_url: 'http://localhost:8000'
+      [API_URL_KEY]: DEFAULT_API_URL
     });
   }
 });

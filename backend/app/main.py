@@ -13,16 +13,12 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Get allowed origins from environment variable
-ALLOWED_ORIGINS = os.getenv(
-    "ALLOWED_ORIGINS",
-    "http://localhost:3000,http://localhost:5173"  # Development defaults
-).split(",")
-
 # Configure CORS
+# Same-origin enforced via nginx (production) and Vite proxy (development)
+# Extensions allowed via moz-extension:// regex
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,
+    allow_origins=[],  # Same-origin only (handled by reverse proxy)
     allow_origin_regex=r"moz-extension://.*",  # Firefox extension
     allow_credentials=True,
     allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
@@ -31,8 +27,8 @@ app.add_middleware(
 )
 
 # Include routers
-app.include_router(auth.router, prefix="/api/auth", tags=["authentication"])
-app.include_router(bookmarks.router, prefix="/api/bookmarks", tags=["bookmarks"])
+app.include_router(auth.router, prefix="/auth", tags=["authentication"])
+app.include_router(bookmarks.router, prefix="/bookmarks", tags=["bookmarks"])
 
 
 @app.get("/")

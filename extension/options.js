@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const notLoggedInfo = document.getElementById('notLoggedInfo');
   const logoutButton = document.getElementById('logoutButton');
 
+  // Set placeholder from config
+  apiUrlInput.placeholder = DEFAULT_API_URL;
+
   // Load current API URL
   const currentApiUrl = await getApiUrl();
   apiUrlInput.value = currentApiUrl;

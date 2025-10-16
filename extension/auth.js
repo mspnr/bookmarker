@@ -1,8 +1,5 @@
 // Authentication utilities for the extension
-
-const AUTH_STORAGE_KEY = 'bookmarker_auth';
-const API_URL_KEY = 'bookmarker_api_url';
-const DEFAULT_API_URL = 'http://localhost:8000';
+// Constants are defined in config.js
 
 /**
  * Get the API base URL from storage

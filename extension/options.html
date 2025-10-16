@@ -28,9 +28,9 @@
     <h2>API Configuration</h2>
     <form id="apiForm">
       <div class="form-group">
-        <label for="apiUrl">Backend API URL</label>
-        <input type="url" id="apiUrl" name="apiUrl" placeholder="http://localhost:8000" required>
-        <small>Enter the URL of your Bookmarker backend server</small>
+        <label for="apiUrl">Frontend Base URL</label>
+        <input type="url" id="apiUrl" name="apiUrl" required>
+        <small>Enter the base URL of your Bookmarker frontend (e.g., http://localhost:3000 for dev, http://localhost:3001 for production)</small>
       </div>
       <button type="submit" class="btn btn-primary">Save API URL</button>
       <div id="apiMessage" class="success" style="display: none; margin-top: 10px;"></div>
@@ -56,6 +56,7 @@
     <p>Simple bookmarking application for saving and managing your bookmarks</p>
   </div>
 
+  <script src="config.js"></script>
   <script src="auth.js"></script>
   <script src="options.js"></script>
 </body>

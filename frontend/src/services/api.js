@@ -1,6 +1,6 @@
 // API client with authentication
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE_URL = '/api';
 
 class ApiClient {
   constructor() {
@@ -68,7 +68,7 @@ class ApiClient {
     }
 
     try {
-      const response = await fetch(`${this.baseUrl}/api/auth/refresh`, {
+      const response = await fetch(`${this.baseUrl}/auth/refresh`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -92,7 +92,7 @@ class ApiClient {
 
   // Auth endpoints
   async login(username, password) {
-    const response = await this.makeRequest('/api/auth/login', {
+    const response = await this.makeRequest('/auth/login', {
       method: 'POST',
       skipAuth: true,
       body: JSON.stringify({
@@ -112,7 +112,7 @@ class ApiClient {
   }
 
   async register(username, password) {
-    const response = await this.makeRequest('/api/auth/register', {
+    const response = await this.makeRequest('/auth/register', {
       method: 'POST',
       skipAuth: true,
       body: JSON.stringify({
@@ -134,7 +134,7 @@ class ApiClient {
     const authData = this.getAuthTokens();
     if (authData?.refreshToken) {
       try {
-        await this.makeRequest('/api/auth/logout', {
+        await this.makeRequest('/auth/logout', {
           method: 'POST',
           body: JSON.stringify({
             refresh_token: authData.refreshToken
@@ -148,7 +148,7 @@ class ApiClient {
   }
 
   async getCurrentUser() {
-    const response = await this.makeRequest('/api/auth/me');
+    const response = await this.makeRequest('/auth/me');
     if (response.ok) {
       return await response.json();
     }
@@ -158,7 +158,7 @@ class ApiClient {
   // Bookmark endpoints
   async getBookmarks(archived = null) {
     const params = archived !== null ? `?archived=${archived}` : '';
-    const response = await this.makeRequest(`/api/bookmarks/${params}`);
+    const response = await this.makeRequest(`/bookmarks/${params}`);
     if (response.ok) {
       return await response.json();
     }
@@ -166,7 +166,7 @@ class ApiClient {
   }
 
   async createBookmark(url, title, notes = null) {
-    const response = await this.makeRequest('/api/bookmarks/', {
+    const response = await this.makeRequest('/bookmarks/', {
       method: 'POST',
       body: JSON.stringify({ url, title, notes })
     });
@@ -178,7 +178,7 @@ class ApiClient {
   }
 
   async updateBookmark(id, updates) {
-    const response = await this.makeRequest(`/api/bookmarks/${id}`, {
+    const response = await this.makeRequest(`/bookmarks/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(updates)
     });
@@ -190,7 +190,7 @@ class ApiClient {
   }
 
   async deleteBookmark(id) {
-    const response = await this.makeRequest(`/api/bookmarks/${id}`, {
+    const response = await this.makeRequest(`/bookmarks/${id}`, {
       method: 'DELETE'
     });
 
