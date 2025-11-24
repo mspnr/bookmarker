@@ -1,15 +1,15 @@
 # Bookmarker
 
-A simple, self-hosted bookmarking application with a browser extension for Firefox and a web interface for managing bookmarks.
+A simple, self-hosted bookmarking application with a cross-platform browser extension and a web interface for managing bookmarks.
 
 ## Features
 
-- 🔖 **Save bookmarks** from Firefox with a single click
-- 📝 **Add notes** to your bookmarks
+- 🔖 **Save bookmarks** from your browser with a single click
+- 📱 **Mobile support** works on Firefox Android
+- 🎨 **List** saved bookmarkds
 - 🗂️ **Archive** read bookmarks
 - 🔐 **Secure authentication** with JWT tokens
 - 🐳 **Docker support** for easy deployment
-- 🎨 **Clean, modern UI** built with React
 
 ## Architecture
 
@@ -17,7 +17,7 @@ The application consists of three main components:
 
 1. **Backend API** - FastAPI server with SQLite database
 2. **Web UI** - React-based frontend for managing bookmarks
-3. **Firefox Extension** - Browser extension for saving bookmarks
+3. **Browser Extension** - Cross-browser extension (Firefox Desktop/Android, Chrome)
 
 ## Prerequisites
 
@@ -40,8 +40,16 @@ cp .env.example .env
 
 ```sh
 # Start and stop container
+docker compose build
 docker compose up -d
 docker compose down
+```
+
+## DB util
+Interactive CLI tool for resetting user passwords when you have backend access.
+
+```sh
+docker compose exec -it backend uv run python db_util.py
 ```
 
 ## Run in development - manually
@@ -70,15 +78,6 @@ npm run dev
    - Backend API - http://localhost:8000, also proxied to http://localhost:3000/api
    - API Documentation: http://localhost:8000/docs
 
-### Firefox Extension Installation
-
-1. Open Firefox
-2. Navigate to `about:debugging#/runtime/this-firefox`
-3. Click "Load Temporary Add-on"
-4. Navigate to `extension/manifest.json` and select it
-5. The extension is now installed and will appear in your toolbar
-
-**Note:** Temporary extensions are removed when Firefox is closed. For permanent installation, you need to sign the extension (https://addons.mozilla.org/en-US/developers/addons) or use Firefox Developer Edition. 
 
 ## First Time Setup
 
@@ -99,12 +98,13 @@ npm run dev
 5. Click the Bookmarker extension icon in your Firefox toolbar again
 6. Log in with your credentials
 
+
 ## Usage
 
 ### Saving Bookmarks
 
-1. Navigate to any webpage in Firefox
-2. Click the Bookmarker extension icon
+1. Navigate to any webpage
+2. Click/tap the Bookmarker extension icon
 3. Confirmation message will appear, displaying that the page has been saved as a bookmark
 
 ### Managing Bookmarks
@@ -130,10 +130,7 @@ npm run dev
 
 ### Change the SECRET_KEY**
  Generate a strong random key using one of these methods:
-```bash
-# Using Python secrets module (recommended)
-python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'
-
+```sh
 # Or using openssl
 openssl rand -base64 64
 

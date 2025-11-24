@@ -32,21 +32,45 @@ export default function BookmarkList() {
   };
 
   const handleArchive = async (id, archived) => {
+    // Store the previous bookmarks state for rollback on error
+    const previousBookmarks = [...bookmarks];
+
+    // Optimistically update the UI immediately
+    setBookmarks((currentBookmarks) =>
+      currentBookmarks.map((bookmark) =>
+        bookmark.id === id
+          ? { ...bookmark, archived, archived_at: archived ? new Date().toISOString() : null }
+          : bookmark
+      )
+    );
+
     try {
+      // Make the API call in the background
       await api.updateBookmark(id, { archived });
-      await loadBookmarks();
     } catch (err) {
       console.error('Failed to update bookmark:', err);
+      // Rollback to previous state on error
+      setBookmarks(previousBookmarks);
       alert('Failed to update bookmark. Please try again.');
     }
   };
 
   const handleDelete = async (id) => {
+    // Store the previous bookmarks state for rollback on error
+    const previousBookmarks = [...bookmarks];
+
+    // Optimistically remove the bookmark from the UI immediately
+    setBookmarks((currentBookmarks) =>
+      currentBookmarks.filter((bookmark) => bookmark.id !== id)
+    );
+
     try {
+      // Make the API call in the background
       await api.deleteBookmark(id);
-      await loadBookmarks();
     } catch (err) {
       console.error('Failed to delete bookmark:', err);
+      // Rollback to previous state on error
+      setBookmarks(previousBookmarks);
       alert('Failed to delete bookmark. Please try again.');
     }
   };
