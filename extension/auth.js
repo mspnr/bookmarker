@@ -1,11 +1,11 @@
 // Authentication utilities for the extension
-// Constants are defined in config.js
+// browserAPI is defined in config.js which is loaded first
 
 /**
  * Get the API base URL from storage
  */
 async function getApiUrl() {
-  const result = await browser.storage.local.get(API_URL_KEY);
+  const result = await browserAPI.storage.local.get(API_URL_KEY);
   return result[API_URL_KEY] || DEFAULT_API_URL;
 }
 
@@ -18,14 +18,14 @@ async function saveAuthTokens(accessToken, refreshToken) {
     refreshToken,
     timestamp: Date.now()
   };
-  await browser.storage.local.set({ [AUTH_STORAGE_KEY]: authData });
+  await browserAPI.storage.local.set({ [AUTH_STORAGE_KEY]: authData });
 }
 
 /**
  * Get auth tokens from storage
  */
 async function getAuthTokens() {
-  const result = await browser.storage.local.get(AUTH_STORAGE_KEY);
+  const result = await browserAPI.storage.local.get(AUTH_STORAGE_KEY);
   return result[AUTH_STORAGE_KEY] || null;
 }
 
@@ -33,7 +33,7 @@ async function getAuthTokens() {
  * Clear auth tokens from storage
  */
 async function clearAuthTokens() {
-  await browser.storage.local.remove(AUTH_STORAGE_KEY);
+  await browserAPI.storage.local.remove(AUTH_STORAGE_KEY);
 }
 
 /**

@@ -169,3 +169,69 @@ body {
   text-align: center;
   color: #6b7280;
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 480px) {
+  /* Adjust container for mobile */
+  .container {
+    padding: 16px;
+    min-width: unset;
+    width: 100%;
+  }
+
+  .popup-container {
+    max-width: 100%;
+  }
+
+  /* Larger touch targets for mobile */
+  .btn {
+    padding: 12px 18px;
+    font-size: 16px;
+    min-height: 44px;
+  }
+
+  .btn-primary {
+    min-height: 48px;
+  }
+
+  /* Larger form inputs for mobile */
+  .form-group input,
+  .form-group textarea {
+    padding: 12px 14px;
+    font-size: 16px;
+    min-height: 44px;
+  }
+
+  /* Adjust header for mobile */
+  .header h1 {
+    font-size: 20px;
+  }
+
+  .header h2 {
+    font-size: 16px;
+  }
+
+  /* Improved mobile messages */
+  .error,
+  .success {
+    font-size: 14px;
+    padding: 12px;
+  }
+}
+
+/* Tablet and small screens */
+@media (max-width: 768px) {
+  .container {
+    padding: 18px;
+  }
+
+  /* Ensure buttons are easily tappable */
+  .btn {
+    min-height: 42px;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    min-height: 42px;
+  }
+}

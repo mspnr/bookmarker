@@ -1,4 +1,5 @@
 // Options/Settings page functionality
+// browserAPI is defined in config.js which is loaded first
 
 document.addEventListener('DOMContentLoaded', async () => {
   const apiForm = document.getElementById('apiForm');
@@ -42,7 +43,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Save API URL
-    await browser.storage.local.set({ bookmarker_api_url: apiUrl });
+    await browserAPI.storage.local.set({ bookmarker_api_url: apiUrl });
     showMessage('API URL saved successfully!', 'success');
   });
 

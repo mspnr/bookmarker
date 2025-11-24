@@ -1,25 +1,13 @@
-// Background script for token management and periodic refresh
-
-const TOKEN_REFRESH_INTERVAL = 25 * 60 * 1000; // 25 minutes (tokens expire in 30 minutes)
-
-// Setup alarm for periodic token refresh
-browser.alarms.create('tokenRefresh', {
-  periodInMinutes: 25
-});
-
-// Listen for alarm
-browser.alarms.onAlarm.addListener(async (alarm) => {
-  if (alarm.name === 'tokenRefresh') {
-    await refreshTokenIfNeeded();
-  }
-});
+// Background service worker for token management and periodic refresh
+// Constants (DEFAULT_API_URL, API_URL_KEY, AUTH_STORAGE_KEY, browserAPI)
+// are defined in config.js which is loaded first
 
 /**
  * Refresh token if user is authenticated
  */
 async function refreshTokenIfNeeded() {
-  const authData = await browser.storage.local.get('bookmarker_auth');
-  const auth = authData.bookmarker_auth;
+  const authData = await browserAPI.storage.local.get(AUTH_STORAGE_KEY);
+  const auth = authData[AUTH_STORAGE_KEY];
 
   if (!auth || !auth.refreshToken) {
     return;
@@ -31,7 +19,7 @@ async function refreshTokenIfNeeded() {
 
   if (tokenAge > twentyMinutes) {
     try {
-      const apiUrlData = await browser.storage.local.get(API_URL_KEY);
+      const apiUrlData = await browserAPI.storage.local.get(API_URL_KEY);
       const apiUrl = apiUrlData[API_URL_KEY] || DEFAULT_API_URL;
 
       const response = await fetch(`${apiUrl}/api/auth/refresh`, {
@@ -46,8 +34,8 @@ async function refreshTokenIfNeeded() {
 
       if (response.ok) {
         const data = await response.json();
-        await browser.storage.local.set({
-          bookmarker_auth: {
+        await browserAPI.storage.local.set({
+          [AUTH_STORAGE_KEY]: {
             accessToken: data.access_token,
             refreshToken: data.refresh_token,
             timestamp: Date.now()
@@ -57,7 +45,7 @@ async function refreshTokenIfNeeded() {
       } else {
         console.error('Token refresh failed');
         // Clear auth data if refresh fails
-        await browser.storage.local.remove('bookmarker_auth');
+        await browserAPI.storage.local.remove(AUTH_STORAGE_KEY);
       }
     } catch (error) {
       console.error('Token refresh error:', error);
@@ -65,14 +53,33 @@ async function refreshTokenIfNeeded() {
   }
 }
 
-// Listen for extension installation
-browser.runtime.onInstalled.addListener((details) => {
-  if (details.reason === 'install') {
-    // Set default API URL
-    browser.storage.local.set({
-      [API_URL_KEY]: DEFAULT_API_URL
-    });
+// Listen for alarm
+browserAPI.alarms.onAlarm.addListener(async (alarm) => {
+  if (alarm.name === 'tokenRefresh') {
+    await refreshTokenIfNeeded();
   }
 });
 
-console.log('Bookmarker background script loaded');
+// Listen for extension installation
+browserAPI.runtime.onInstalled.addListener(async (details) => {
+  if (details.reason === 'install') {
+    // Set default API URL
+    await browserAPI.storage.local.set({
+      [API_URL_KEY]: DEFAULT_API_URL
+    });
+  }
+
+  // Setup alarm for periodic token refresh (25 minutes)
+  await browserAPI.alarms.create('tokenRefresh', {
+    periodInMinutes: 25
+  });
+
+  console.log('Bookmarker background service worker initialized');
+});
+
+// Setup alarm when service worker starts
+browserAPI.alarms.create('tokenRefresh', {
+  periodInMinutes: 25
+});
+
+console.log('Bookmarker background service worker loaded');

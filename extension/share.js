@@ -1,10 +1,9 @@
-// Popup functionality
+// Share handler functionality
 // browserAPI is defined in config.js which is loaded first
 
 document.addEventListener('DOMContentLoaded', async () => {
   const notLoggedInView = document.getElementById('notLoggedIn');
   const loggedInView = document.getElementById('loggedIn');
-  const loadingView = document.getElementById('loading');
   const loginButton = document.getElementById('loginButton');
   const statusMessage = document.getElementById('statusMessage');
   const errorMessage = document.getElementById('errorMessage');
@@ -12,12 +11,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Check authentication status
   const authenticated = await isAuthenticated();
-
-  // Get current tab info
-  const tabs = await browserAPI.tabs.query({ active: true, currentWindow: true });
-  const currentTab = tabs[0];
-
-  loadingView.style.display = 'none';
 
   if (!authenticated) {
     // Show login view
@@ -28,24 +21,26 @@ document.addEventListener('DOMContentLoaded', async () => {
       window.close();
     });
   } else {
-    // Show logged in view and auto-save bookmark
+    // Show logged in view
     loggedInView.style.display = 'block';
 
-    // Immediately save the bookmark
-    const url = currentTab.url;
-    const title = currentTab.title;
+    // Get shared data from URL parameters
+    const params = new URLSearchParams(window.location.search);
+    const sharedUrl = params.get('url');
+    const sharedTitle = params.get('title') || 'Shared Link';
 
-    if (!url || !title) {
-      showError('Cannot save bookmark: URL and title are required');
+    if (!sharedUrl) {
+      showError('No URL was shared');
       return;
     }
 
+    // Save the shared bookmark
     try {
       const response = await makeAuthenticatedRequest('/api/bookmarks/', {
         method: 'POST',
         body: JSON.stringify({
-          url,
-          title,
+          url: sharedUrl,
+          title: sharedTitle,
           notes: null
         })
       });
@@ -54,10 +49,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         statusMessage.style.display = 'none';
         showSuccess('✓ Bookmark saved successfully!');
 
-        // Close popup after 1.5 seconds
+        // Close page after 2 seconds
         setTimeout(() => {
           window.close();
-        }, 1500);
+        }, 2000);
       } else {
         const error = await response.json();
         statusMessage.style.display = 'none';
