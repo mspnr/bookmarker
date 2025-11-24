@@ -14,6 +14,7 @@ RUN uv venv && \
 
 # Copy application code
 COPY ./app ./app
+COPY db_util.py .
 
 # Expose port
 EXPOSE 8000
