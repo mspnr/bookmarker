@@ -26,14 +26,26 @@
   <h1>Bookmarker Settings</h1>
 
   <div class="settings-section">
-    <h2>API Configuration</h2>
+    <h2>Server configuration</h2>
+
+    <div class="info-message" style="background-color: #e3f2fd; border-left: 4px solid #2196f3; padding: 12px; margin-bottom: 15px; border-radius: 4px;">
+      <p style="margin: 0; font-size: 14px;">
+        📖 <strong>Don't have a server yet?</strong> Check the
+        <a href="#" id="setupGuideLink" style="color: #1976d2; text-decoration: underline;">setup guide</a>
+        to install and configure the backend.
+      </p>
+    </div>
+
     <form id="apiForm">
       <div class="form-group">
         <label for="apiUrl">Frontend Base URL</label>
         <input type="url" id="apiUrl" name="apiUrl" required>
-        <small>Enter the base URL of your Bookmarker frontend (e.g., http://localhost:3000 for dev, http://localhost:3001 for production)</small>
+        <small>Enter the base URL of your Bookmarker frontend (e.g., http://my-server.local:3001)</small>
       </div>
-      <button type="submit" class="btn btn-primary">Save API URL</button>
+      <div style="display: flex; gap: 10px;">
+        <button type="button" id="testConnectionButton" class="btn" style="flex: 1;">Test Connection</button>
+        <button type="submit" class="btn btn-primary" style="flex: 1;">Save</button>
+      </div>
       <div id="apiMessage" class="success" style="display: none; margin-top: 10px;"></div>
     </form>
   </div>
@@ -41,20 +53,38 @@
   <div class="settings-section">
     <h2>Account</h2>
     <div id="accountInfo" style="display: none;">
-      <p><strong>Status:</strong> Logged in</p>
+      <p id="loginStatus"><strong>Status:</strong> Logged in</p>
       <button id="logoutButton" class="btn">Logout</button>
     </div>
     <div id="notLoggedInfo" style="display: none;">
       <p><strong>Status:</strong> Not logged in</p>
-      <p>Click the extension icon to log in</p>
+
+      <form id="loginForm" style="margin-top: 15px;">
+        <div class="form-group">
+          <label for="loginUsername">Username</label>
+          <input type="text" id="loginUsername" name="username" required>
+        </div>
+
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" name="password" required>
+        </div>
+
+        <div id="loginErrorMessage" class="error" style="display: none;"></div>
+
+        <button type="submit" id="loginButton" class="btn btn-primary">
+          Login
+        </button>
+      </form>
     </div>
   </div>
 
   <div class="settings-section">
     <h2>About</h2>
     <p><strong>Extension:</strong> Bookmarker</p>
-    <p><strong>Version:</strong> 2.0.0</p>
-    <p>Cross-platform bookmarking application with mobile support for saving and managing your bookmarks</p>
+    <p><strong>Version:</strong> <span id="extensionVersion"></span></p>
+    <p>Self hosted web based bookmarking application with browser extension</p>
+    <p><strong>GitHub:</strong> <a href="https://github.com/mspnr/bookmarker" target="_blank" style="color: #1976d2; text-decoration: underline;">https://github.com/mspnr/bookmarker</a></p>
   </div>
 
   <script src="config.js"></script>

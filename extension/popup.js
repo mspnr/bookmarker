@@ -10,6 +10,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   const errorMessage = document.getElementById('errorMessage');
   const successMessage = document.getElementById('successMessage');
 
+  // Check if server is configured first
+  const apiUrl = await getApiUrl();
+  const serverConfigured = apiUrl !== DEFAULT_API_URL;
+
+  if (!serverConfigured) {
+    // Server not configured, open options page
+    browserAPI.runtime.openOptionsPage();
+    window.close();
+    return;
+  }
+
   // Check authentication status
   const authenticated = await isAuthenticated();
 
@@ -27,6 +38,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       browserAPI.tabs.create({ url: browserAPI.runtime.getURL('login.html') });
       window.close();
     });
+
+    const optionsButton = document.getElementById('optionsButton');
+    if (optionsButton) {
+      optionsButton.addEventListener('click', () => {
+        browserAPI.runtime.openOptionsPage();
+        window.close();
+      });
+    }
   } else {
     // Show logged in view and auto-save bookmark
     loggedInView.style.display = 'block';

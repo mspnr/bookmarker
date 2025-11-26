@@ -12,12 +12,15 @@ async function getApiUrl() {
 /**
  * Save auth tokens to storage
  */
-async function saveAuthTokens(accessToken, refreshToken) {
+async function saveAuthTokens(accessToken, refreshToken, username = null) {
   const authData = {
     accessToken,
     refreshToken,
     timestamp: Date.now()
   };
+  if (username) {
+    authData.username = username;
+  }
   await browserAPI.storage.local.set({ [AUTH_STORAGE_KEY]: authData });
 }
 
@@ -42,6 +45,14 @@ async function clearAuthTokens() {
 async function isAuthenticated() {
   const authData = await getAuthTokens();
   return authData && authData.accessToken;
+}
+
+/**
+ * Get username from storage
+ */
+async function getUsername() {
+  const authData = await getAuthTokens();
+  return authData?.username || null;
 }
 
 /**
@@ -137,7 +148,21 @@ async function login(username, password) {
 
   if (response.ok) {
     const data = await response.json();
-    await saveAuthTokens(data.access_token, data.refresh_token);
+
+    // Fetch user info to get username
+    const userResponse = await fetch(`${apiUrl}/api/auth/me`, {
+      headers: {
+        'Authorization': `Bearer ${data.access_token}`
+      }
+    });
+
+    let fetchedUsername = username; // fallback to login username
+    if (userResponse.ok) {
+      const userData = await userResponse.json();
+      fetchedUsername = userData.username;
+    }
+
+    await saveAuthTokens(data.access_token, data.refresh_token, fetchedUsername);
     return { success: true };
   } else {
     const error = await response.json();

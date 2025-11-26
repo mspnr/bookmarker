@@ -53,4 +53,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     errorMessage.textContent = message;
     errorMessage.style.display = 'block';
   }
+
+  // Handle Options button
+  const optionsButton = document.getElementById('optionsButton');
+  if (optionsButton) {
+    optionsButton.addEventListener('click', () => {
+      browserAPI.runtime.openOptionsPage();
+    });
+  }
 });

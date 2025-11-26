@@ -60,6 +60,42 @@ browserAPI.alarms.onAlarm.addListener(async (alarm) => {
   }
 });
 
+// Create context menu items on service worker startup
+browserAPI.contextMenus.removeAll(async () => {
+  browserAPI.contextMenus.create({
+    id: 'open-frontend',
+    title: 'Open Bookmarker Web UI',
+    contexts: ['action']
+  });
+
+  browserAPI.contextMenus.create({
+    id: 'open-options',
+    title: 'Settings',
+    contexts: ['action']
+  });
+});
+
+// Handle context menu clicks
+browserAPI.contextMenus.onClicked.addListener(async (info, tab) => {
+  if (info.menuItemId === 'open-frontend') {
+    // Get the configured API URL
+    const apiUrlData = await browserAPI.storage.local.get(API_URL_KEY);
+    const frontendUrl = apiUrlData[API_URL_KEY] || DEFAULT_API_URL;
+
+    // Check if server is configured (not default)
+    if (frontendUrl === DEFAULT_API_URL) {
+      // Server not configured, open options instead
+      browserAPI.runtime.openOptionsPage();
+    } else {
+      // Open frontend in new tab
+      browserAPI.tabs.create({ url: frontendUrl });
+    }
+  } else if (info.menuItemId === 'open-options') {
+    // Open options page
+    browserAPI.runtime.openOptionsPage();
+  }
+});
+
 // Listen for extension installation
 browserAPI.runtime.onInstalled.addListener(async (details) => {
   if (details.reason === 'install') {
@@ -72,6 +108,19 @@ browserAPI.runtime.onInstalled.addListener(async (details) => {
   // Setup alarm for periodic token refresh (25 minutes)
   await browserAPI.alarms.create('tokenRefresh', {
     periodInMinutes: 25
+  });
+
+  // Create context menu items
+  browserAPI.contextMenus.create({
+    id: 'open-frontend',
+    title: 'Open Bookmarker Web UI',
+    contexts: ['action']
+  });
+
+  browserAPI.contextMenus.create({
+    id: 'open-options',
+    title: 'Settings',
+    contexts: ['action']
   });
 
   console.log('Bookmarker background service worker initialized');
